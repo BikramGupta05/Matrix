@@ -28,7 +28,17 @@ const userSchema=new mongoose.Schema({
     enrolledrooms:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Hotels"
-    }]
+    }],
+    resetOtp:{
+        type:String
+    },
+    otpExpires:{
+        type:Date
+    },
+    isOtpVerified:{
+        type:Boolean,
+        default:false
+    }
 },{timestamps:true})
 
 const User=mongoose.model("User",userSchema)

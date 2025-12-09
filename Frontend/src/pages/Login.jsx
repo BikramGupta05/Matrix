@@ -10,6 +10,8 @@ import { serverUrl } from "../App";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../utils/firebase";
 
 function Login(){
     const [show,setShow]=useState(false)
@@ -29,6 +31,23 @@ function Login(){
         } catch (error) {
             console.log(error)
             setLoading(false)
+            toast.error(error.response.data.message)
+        }
+    }
+    const googleLogin = async () => {
+        try {
+            const response= await signInWithPopup(auth,provider)
+            let user=response.user
+            let name=user.displayName
+            let email=user.email
+            let role=""
+
+            const result=await axios.post(serverUrl+"/api/auth/googleauth",{name ,email,role},{withCredentials:true})
+            dispatch(setUserData(result.data))
+            navigate("/")
+            toast.success("Login Successfuly")
+        } catch (error) {
+            console.log(error)
             toast.error(error.response.data.message)
         }
     }
@@ -53,13 +72,13 @@ function Login(){
                            <FaEyeSlash className='absolute w-[20px] h-[20px] cursor-pointer right-[5%] bottom-[10%]' onClick={()=>setShow(prev=>!prev)}/>}
                         </div>
                         <button className='w-[80%] h-[40px] bg-black text-white cursor-pointer flex items-center justify-center rounded-[5px]'onClick={handleLogin} disabled={loading}>{loading ? <ClipLoader size={30} color="grey"/> :"Login"}</button>
-                        <span className='text-[13px] cursor-pointer text-[#585757]' onClick={()=>navigate("/")}>Forget password ?</span>
+                        <span className='text-[13px] cursor-pointer text-[#585757]' onClick={()=>navigate("/forget")}>Forget password ?</span>
                         <div className='w-[80%] flex items-center gap-2'>
                             <div className='w-[25%] h-[0.5px] bg-[#c4c4c4]'></div>
                             <div className='w-[50%] text-[15px] text-[#6f6f6f] flex items-center justify-center'>Or continue with</div>
                             <div className='w-[25%] h-[0.5px] bg-[#c4c4c4]'></div>
                         </div>
-                        <div className='w-[80%] h-[40px] border-1 border-[black] rounded-[5px] flex items-center justify-center cursor-pointer' >
+                        <div className='w-[80%] h-[40px] border-1 border-[black] rounded-[5px] flex items-center justify-center cursor-pointer' onClick={googleLogin}>
                             <img src={g} className='w-[25px]' alt="" />
                             <span className='text-[18px] text-gray-500'>oogle</span>
                         </div>
