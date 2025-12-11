@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import { IoPersonCircle } from "react-icons/io5";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { GiSplitCross } from "react-icons/gi";
+import { useUserStore } from "../store/user-store";
+import Expenses from "../pages/Recep/Expenses";
 
 function Nav(){
     const userData= useSelector(state=>state.user.userData)
@@ -17,11 +19,14 @@ function Nav(){
     const [show,setShow]=useState(false)
     const [showHam,setShowHam]=useState(false)
 
+    const {logout} = useUserStore()
+
     const handleLogOut = async () => {
         try {
             const result = await axios.get(serverUrl+"/api/auth/logout",{withCredentials:true})
             dispatch(setUserData(null))
             console.log(result.data)
+            logout()
             toast.success("Logout Successfully")
         } catch (error) {
             console.log(error)
@@ -36,15 +41,21 @@ function Nav(){
                         <img src={flogo} alt="" className='w-[60px] rounded-[5px] border-2 border-white ' />
                     </div>
                     <div className='w-[30%] lg:flex items-center justify-center gap-4 hidden'>
-                        {!userData ? <IoPersonCircle className='w-[50px] h-[50px] fill-black cursor-pointer' onClick={()=>setShow(prev=>!prev)}/>:
-                        (userData?.photoUrl ?<img src={userData?.photoUrl} className='w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer' onClick={()=>setShow(prev=>!prev)}/>: <div className='w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer'  onClick={()=>setShow(prev=>!prev)}>
+                        {/* for Only Owner */}
+                        {userData?.role==="Owner" && <div className='w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer' onClick={()=>navigate("/hotels")}> Hotels</div>}
+                        {/* for Only Recep */}
+                        {userData?.role==="Recep" && <div className='w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer' onClick={()=>navigate("/expenses")}> Expenses</div>}
+                    </div>
+                    <div className='w-[30%] lg:flex items-center justify-center gap-4 hidden'>
+                        {!userData && <IoPersonCircle className='w-[50px] h-[50px] fill-black cursor-pointer' onClick={()=>setShow(prev=>!prev)}/>}
+                        {userData?.photoUrl ?<img src={userData?.photoUrl} className='w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer' onClick={()=>setShow(prev=>!prev)}/>: <div className='w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer'  onClick={()=>setShow(prev=>!prev)}>
                          {userData?.name.slice(0,1).toUpperCase()}
-                        </div>) }
-                        {userData ?.role==="Owner" && <div className='px-[20px] py-[10px] border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer' > Owner</div>}
+                        </div>}
+                        {/* {userData ?.role==="Owner" && <div className='px-[20px] py-[10px] border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer' > Owner</div>} */}
                         { !userData ? <span className='px-[20px] py-[10px] border-2 border-white text-white rounded-[10px] text-[18px] font-light bg-[#000000d5]  cursor-pointer' onClick={()=>navigate("/login")}>Login</span> :
                         <span className='px-[20px] py-[10px] bg-white text-black rounded-[10px] shadow-sm shadow-black text-[18px]    cursor-pointer' onClick={handleLogOut}>LogOut</span>}
                         {show && <div className='absolute top-[110%] right-[15%] flex items-center flex-col justify-center gap-2 text-[16px]rounded-md bg-[white] ps-[15px] py-[10px] border-[2px] border-black hover:border-white hover:text-white cursor-pointer hover:bg-black'>
-                        <span className='bg-[black] text-white px-[30px] py-[10px] rounded-2xl hover:bg-gray-600' onClick={()=>navigate("/profile")}>My Profile</span>
+                        <span className='bg-[black] text-white px-[30px] py-[10px] rounded-2xl hover:bg-gray-600'   onClick={()=>{setShow(prev => !prev);navigate("/profile")}}>My Profile</span>
                         <span className='bg-[black] text-white px-[30px] py-[10px] rounded-2xl hover:bg-gray-600'>My Courses</span>
                         </div>}
                 

@@ -6,6 +6,7 @@ import authRouter from './route/authRoute.js'
 import userRouter from './route/userRoute.js'
 dotenv.config()
 import cors from "cors"
+import hotelRouter from './route/hotelRoute.js'
 
 
 const port=process.env.PORT
@@ -19,6 +20,7 @@ app.use(cors({
 
 app.use("/api/auth", authRouter)
 app.use("/api/user", userRouter)
+app.use("/api/hotel", hotelRouter)
 
 app.get("/",(req,res)=>{
     res.send("Hello from server")

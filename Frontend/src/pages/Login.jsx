@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import flogo from "../assets/flogo.png"
 import { IoEyeOutline } from "react-icons/io5";
 import { FaEyeSlash } from "react-icons/fa";
@@ -13,6 +13,9 @@ import { setUserData } from "../redux/userSlice";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../utils/firebase";
 
+import { useUserStore } from "../store/user-store";
+
+
 function Login(){
     const [show,setShow]=useState(false)
     const navigate=useNavigate()
@@ -20,10 +23,16 @@ function Login(){
     const [password,setPassword]=useState("")
     const [loading,setLoading]=useState(false)
     const dispatch = useDispatch()
+
+    const {login, user, isLoggedIn} = useUserStore()
+
+
     const handleLogin=async () => {
         setLoading(true)
         try {
             const result=await axios.post(serverUrl+"/api/auth/login",{email,password},{withCredentials:true})
+            const userData = result.data
+            login({user:userData, token:""});
             dispatch(setUserData(result.data))
             setLoading(false)
             navigate("/")
@@ -51,6 +60,12 @@ function Login(){
             toast.error(error.response.data.message)
         }
     }
+
+    useEffect(() => {
+        if(isLoggedIn === true) {
+            navigate("/")
+        }
+    },[])
 
         return (
             <div className='bg-[#dddbdb] w-[100vw] h-[100vh] flex items-center justify-center'>

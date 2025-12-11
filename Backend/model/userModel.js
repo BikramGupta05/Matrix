@@ -21,7 +21,7 @@ const userSchema=new mongoose.Schema({
         enum:["Recep","Owner"],
         required:true
     },
-    photUrl:{
+    photoUrl:{
         type:String,
         default:""
     },
