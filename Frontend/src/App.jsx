@@ -16,6 +16,7 @@ import CreateHotel from "./pages/Owner/CreateHotel.jsx";
 import getAdminHotel from "./customHooks/getAdminHotel.js";
 import EditHotel from "./pages/Owner/EditHotel.jsx";
 import RecepPage from "./pages/Owner/RecepPage.jsx";
+import CreateRecep from "./pages/Owner/CreateRecep.jsx";
 export const serverUrl="http://localhost:8000"
 function App(){
   getCurrentUser()
@@ -38,6 +39,8 @@ function App(){
         <Route path="/addnewhotel" element={userData?.role==="Owner" ? <CreateHotel/> : <Navigate to={"/login"}/>}/>
         <Route path="/edithotel/:hotelId" element={userData?.role==="Owner" ? <EditHotel/> : <Navigate to={"/login"}/>}/>
         <Route path="/receppage/:hotelId" element={userData?.role==="Owner" ? <RecepPage/> : <Navigate to={"/login"}/>}/>
+        {/* <Route path="/createrecep/:hotelId" element={userData?.role==="Owner" ? <CreateRecep/> : <Navigate to={"/login"}/>}/> */}
+        <Route path="/createrecep/:hotelId" element={userData?.role==="Owner" ? <CreateRecep/> : <Navigate to={"/login"}/>}/>
       </Routes>
 
     </div>

@@ -27,7 +27,7 @@ const userSchema=new mongoose.Schema({
     },
     enrolledrooms:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Hotels"
+        ref:"Hotel"
     }],
     resetOtp:{
         type:String
@@ -38,6 +38,10 @@ const userSchema=new mongoose.Schema({
     isOtpVerified:{
         type:Boolean,
         default:false
+    },
+    recephotelId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Hotel"
     }
 },{timestamps:true})
 

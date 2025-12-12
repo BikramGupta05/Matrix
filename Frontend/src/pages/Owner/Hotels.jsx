@@ -42,7 +42,7 @@ function Hotels(){
                            <th className='text-left py-3 px-4'>Hotel Name</th>
                            <th className='text-left py-3 px-4'>Location</th>
                             <th className='text-left py-3 px-4'>Action</th>
-                            <th className='text-left py-3  pl-1'>Manage Recep</th>
+                            <th className='text-left py-3  pl-1'>Add Recep</th>
                         </tr>
                     </thead>
                     <tbody>

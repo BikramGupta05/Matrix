@@ -32,3 +32,30 @@ export const updateProfile = async (req,res) => {
         return res.status(500).json({message:`Update profile error ${error}`})
     }
 }
+
+// getting hotels by their id
+// export const getHotelRecep=async (req,res) => {
+//     try {
+//         const {hotelId}=req.params
+//         let recep= await User.findById(hotelId)
+//         if(!recep){
+//             return res.status(400).json({message:"Recep  not found"})
+//         }
+//         return res.status(200).json(recep)
+//     } catch (error) {
+//         return res.status(500).json({message:`failed to get recep by id ${error}`})
+//     }
+// }
+
+// export const getHotelRecep = async (req,res) => {
+//     try {
+//         const userId=req.userId
+//         const hotels=await User.find({admin:userId})
+//         if(!hotels){
+//             return res.status(400).json({message:"Hotels not found"})
+//         }
+//         return res.status(200).json(hotels)
+//     } catch (error) {
+//         return res.status(500).json({message:`failed toget Amin Hotels${error}`})
+//     }
+// }

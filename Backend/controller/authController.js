@@ -6,7 +6,7 @@ import sendMail from "../config/sendMail.js"
 
 export const signUp=async (req,res) => {
     try {
-        const {name,email,password,role}=req.body
+        const {name,email,password,role,recephotelId}=req.body
         let existUser=await User.findOne({email})
         if(existUser){
             return res.status(400).json({message:"User is already exist"})
@@ -22,7 +22,8 @@ export const signUp=async (req,res) => {
             name,
             email,
             password:hashPassword,
-            role
+            role,
+            recephotelId
         })
         let token= await genToken(user._id)
         res.cookie("token",token,{

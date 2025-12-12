@@ -1,5 +1,6 @@
 import Hotel from "../model/hotelModel.js"
-
+import User from "../model/userModel.js"
+import mongoose from "mongoose"
 
 //for creating new hotel in admin panel
 export const createHotel= async (req,res) => {
@@ -79,4 +80,26 @@ export const removeHotel= async (req,res) => {
     } catch (error) {
         return res.status(500).json({message:`failed to delete Hotel ${error}`})
     }
+}
+
+export const getHotelReceptionists = async (req, res) => {
+  try {
+    const { hotelId } = req.params
+
+    // optional: validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(hotelId)) {
+      return res.status(400).json({ message: 'Invalid hotel id' })
+    }
+
+    // Find users whose role is Recep and recephotelId matches
+    const receptionists = await User.find({
+      role: 'Recep',
+      recephotelId: hotelId
+    }).select('-password') // don't send password
+
+    return res.status(200).json(receptionists)
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ message: 'Server error' })
+  }
 }

@@ -9,14 +9,14 @@ const hotelschema=  new mongoose.Schema({
         type:String,
         required:true
     },
-    enrolledRecep:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Recep"
-    }],
-    receps:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Recep"
-    }],
+    // enrolledRecep:[{
+    //     type:mongoose.Schema.Types.ObjectId,
+    //     ref:"Recep"
+    // }],
+    // receps:[{
+    //     type:mongoose.Schema.Types.ObjectId,
+    //     ref:"Recep"
+    // }],
     admin:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
