@@ -17,6 +17,9 @@ import getAdminHotel from "./customHooks/getAdminHotel.js";
 import EditHotel from "./pages/Owner/EditHotel.jsx";
 import RecepPage from "./pages/Owner/RecepPage.jsx";
 import CreateRecep from "./pages/Owner/CreateRecep.jsx";
+import CreateExpense from "./pages/Recep/CreateExpense.jsx";
+import AllExpense from "./pages/Owner/AllExpense.jsx";
+import HotelExpense from "./pages/Owner/HotelExpense.jsx";
 export const serverUrl="http://localhost:8000"
 function App(){
   getCurrentUser()
@@ -41,6 +44,11 @@ function App(){
         <Route path="/receppage/:hotelId" element={userData?.role==="Owner" ? <RecepPage/> : <Navigate to={"/login"}/>}/>
         {/* <Route path="/createrecep/:hotelId" element={userData?.role==="Owner" ? <CreateRecep/> : <Navigate to={"/login"}/>}/> */}
         <Route path="/createrecep/:hotelId" element={userData?.role==="Owner" ? <CreateRecep/> : <Navigate to={"/login"}/>}/>
+        <Route path="/addnewexpense" element={userData?.role==="Recep" ? <CreateExpense/> : <Navigate to={"/login"}/>}/>
+        <Route path="/expenses/:recepId" element={userData?.role==="Owner" ? <Expenses/> : <Navigate to={"/login"}/>}/>
+        <Route path="/allexpenses" element={userData?.role==="Owner" ? <AllExpense/> : <Navigate to={"/login"}/>}/>
+        <Route path="/hotel-expense/:hotelId"element={userData?.role==="Owner" ? <HotelExpense/> : <Navigate to="/login" />}/>
+
       </Routes>
 
     </div>

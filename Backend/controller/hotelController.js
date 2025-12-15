@@ -1,3 +1,4 @@
+import Expense from "../model/expenseModel.js"
 import Hotel from "../model/hotelModel.js"
 import User from "../model/userModel.js"
 import mongoose from "mongoose"
@@ -30,7 +31,7 @@ export const getAdminHotels = async (req,res) => {
         }
         return res.status(200).json(hotels)
     } catch (error) {
-        return res.status(500).json({message:`failed toget Amin Hotels${error}`})
+        return res.status(500).json({message:`failed toget Admin Hotels${error}`})
     }
 }
 
@@ -70,13 +71,24 @@ export const gethotelById=async (req,res) => {
 // for deleting the hotels
 export const removeHotel= async (req,res) => {
     try {
-        const {hotelId}=req.params
-        let hotel= await Hotel.findById(hotelId)
-        if(!hotel){
-            return res.status(400).json({message:"Hotel is not found"})
+        const { hotelId } = req.params
+
+        // 1. Check if hotel exists
+        const hotel = await Hotel.findById(hotelId)
+        if (!hotel) {
+            return res.status(404).json({ message: "Hotel not found" })
         }
-        hotel= await Hotel.findByIdAndDelete(hotelId,{new:true}) 
-        return res.status(200).json({message:"Hotel removed"})
+
+        // 2. Delete all receptionists/users of this hotel
+        await User.deleteMany({ recephotelId: hotelId })
+
+        // 3. Delete all expenses of this hotel
+        await Expense.deleteMany({ creatorHotelId: hotelId })
+
+        // 4. Delete the hotel
+        await Hotel.findByIdAndDelete(hotelId)
+
+        return res.status(200).json({ message: "Hotel removed successfully" })
     } catch (error) {
         return res.status(500).json({message:`failed to delete Hotel ${error}`})
     }

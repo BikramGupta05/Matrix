@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { FaEdit } from "react-icons/fa";
+import { IoEyeOutline } from "react-icons/io5";
 import axios from "axios";
 import { serverUrl } from "../../App";
 
@@ -11,7 +11,7 @@ function RecepPage() {
 
     const [receptionists, setReceptionists] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    
     useEffect(() => {
         const fetchReceptionists = async () => {
             try {
@@ -59,6 +59,7 @@ function RecepPage() {
                                 <th className='text-left py-3 px-4'>Name</th>
                                 <th className='text-left py-3 px-4'>Email</th>
                                 <th className='text-left py-3 px-4'>Created</th>
+                                <th className='text-left py-3 px-4'>Expenses</th>
                                 <th className='text-left py-3 px-4'>Action</th>
                             </tr>
                         </thead>
@@ -86,9 +87,9 @@ function RecepPage() {
                                             {new Date(r?.createdAt).toLocaleDateString()}
                                         </td>
                                         <td className='py-3 px-4'>
-                                            <FaEdit
+                                            <IoEyeOutline
                                                 className='text-gray-600 hover:text-blue-600 cursor-pointer'
-                                                onClick={() => navigate(`/editrecep/${r?._id}`)}
+                                                onClick={() => navigate(`/expenses/${r?._id}`)}
                                             />
                                         </td>
                                     </tr>

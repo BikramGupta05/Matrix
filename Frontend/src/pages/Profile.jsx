@@ -9,7 +9,7 @@ function Profile() {
   return (
     <div className='min-h-screen bg-gray-100 px-4 py-10 flex items-center justify-center'>
         <div className='bg-white shadow-lg rounded-2xl p-8 max-w-xl w-full relative'>
-            <FaArrowLeftLong className='absolute top-[8%] left-[5%] w-[22px] h-[22px] cursor-pointer' onClick={()=>navigate("/")}/>
+            <FaArrowLeftLong className='absolute top-[8%] left-[5%] w-[22px] h-[22px] cursor-pointer' onClick={()=>navigate(-1)}/>
             <div className=' flex flex-col items-center text-center'>
                 {userData.photoUrl? <img src={userData.photoUrl} className='w-24 h-24 rounded-full object-cover border-4 border-[black]' alt="" /> :
                 <div className='w-24 h-24 rounded-full text-white flex items-center justify-center text-[30px] border-2 bg-black border-white'>
