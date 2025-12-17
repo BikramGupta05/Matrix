@@ -5,9 +5,16 @@ import { IoEyeOutline } from "react-icons/io5";
 import axios from "axios";
 import { serverUrl } from "../../App";
 
-function RecepPage() {
+function RecepPage({hotelId}) {
+    if(!hotelId){
+        return (
+            <div>
+                Provide Hotel Id first
+            </div>
+        )
+    }
     const navigate = useNavigate();
-    const { hotelId } = useParams();
+    // const { hotelId } = useParams();
 
     const [receptionists, setReceptionists] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -29,8 +36,8 @@ function RecepPage() {
     }, [hotelId]);
 
     return (
-        <div className='flex min-h-screen bg-gray-100'>
-            <div className='w-[100%] min-h-screen p-4 sm:p-6 bg-gray-100'>
+        <div className='flex h-full w-full bg-gray-500'>
+            <div className='w-[100%] min-h-screen p-4 sm:p-6 bg-gray-500'>
 
                 {/* HEADER */}
                 <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 px-4'>

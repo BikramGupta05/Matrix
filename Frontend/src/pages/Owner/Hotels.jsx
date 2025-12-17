@@ -1,11 +1,32 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaArrowLeftLong } from "react-icons/fa6";
-import { FaEdit } from "react-icons/fa";
+import { FaArrowLeftLong, FaX } from "react-icons/fa6";
+import { FaCross, FaEdit, FaEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { serverUrl } from "../../App";
 import { setAdminHotelData } from "../../redux/hotelSlice";
+import { useState } from "react";
+import RecepPage from "./RecepPage";
+
+
+export function Modal({isOpen, onClose, children}){
+    if(!isOpen){
+        return <></>
+    }
+    
+    else return (
+        <>
+        
+        <div className="max-w-5xl max-h-96 bg-gray-500 absolute z-100 top-auto bottom-auto left-auto right-auto overflow-auto">
+            <button className="absolute top-1 right-0 m-1 p-1 rounded-full bg-white" onClick={onClose}>
+                <FaX  className="w-3 h-3" />
+            </button>
+            {children}
+        </div>
+        </>
+    )
+}
 
 function Hotels(){
     const navigate =useNavigate()
@@ -26,8 +47,16 @@ function Hotels(){
                 }
                 createHotels()
             },[userData])
+
+    const [isListOpen, setIsListOpen] = useState(false)  
+    const [currentHotelId, setCurrentHotelId] = useState(null)      
+    const handleToggleRecepList = (hotelId) => {
+        setCurrentHotelId(hotelId)
+         setIsListOpen(prev => !prev)
+    }
+
     return(
-        <div className='flex min-h-screen bg-gray-100'>
+        <div className='flex justify-center items-center min-h-screen bg-gray-100'>
             <div className='w-[100%] min-h-screen p-4 sm:p-6 bg-gray-100'>
                 <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 px-4'>
                     <div className='flex items-center justify-center gap-3'>
@@ -58,6 +87,9 @@ function Hotels(){
                                <td className='py-3  pl-1'>
                                    <FaEdit className='text-gray-600 hover:text-blue-600 cursor-pointer' onClick={()=>navigate(`/receppage/${hotel?._id}`)}/>
                                </td>
+                               <td className='py-3  pl-1'>
+                                   <FaEye className='text-gray-600 hover:text-blue-600 cursor-pointer' onClick={() => handleToggleRecepList(hotel._id)} />
+                               </td>
                             </tr>
                         ))}
                     </tbody>
@@ -65,6 +97,7 @@ function Hotels(){
                     <p className='text-center text-sm text-gray-400 mt-6'>A list of your Hotels.</p>
                 </div>
             </div>
+            <Modal isOpen={isListOpen} onClose={handleToggleRecepList} children={<RecepPage hotelId={currentHotelId} />}  />
         </div>
     )
 }
