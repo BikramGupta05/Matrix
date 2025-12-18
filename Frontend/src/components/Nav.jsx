@@ -88,6 +88,7 @@ function Nav() {
 
         {/* center buttons (desktop) */}
         <div className="w-[30%] lg:flex items-center justify-center gap-4 hidden">
+          {/* for Owner */}
           {userData?.role === "Owner" && (
              <>
              <div onClick={() => navigate("/hotels")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">Hotels</div>
@@ -95,8 +96,13 @@ function Nav() {
              </>
             
           )}
+
+          {/* for Recep */}
           {userData?.role === "Recep" && (
+            <>
             <div onClick={() => navigate("/expenses")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">Expenses</div>
+            <div onClick={() => navigate("/allrooms")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">All Rooms</div>
+            </>
           )}
         </div>
 

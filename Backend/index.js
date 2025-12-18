@@ -8,6 +8,7 @@ dotenv.config()
 import cors from "cors"
 import hotelRouter from './route/hotelRoute.js'
 import expenseRouter from './route/expenseRoute.js'
+import roomRouter from './route/roomRoute.js'
 
 
 const port=process.env.PORT
@@ -23,6 +24,7 @@ app.use("/api/auth", authRouter)
 app.use("/api/user", userRouter)
 app.use("/api/hotel", hotelRouter)
 app.use("/api/expense", expenseRouter)
+app.use("/api/room", roomRouter)
 
 app.get("/",(req,res)=>{
     res.send("Hello from server")

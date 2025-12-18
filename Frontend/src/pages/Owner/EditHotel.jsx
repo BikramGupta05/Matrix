@@ -5,13 +5,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { serverUrl } from "../../App";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
+import { removeHotelFromList } from "../../redux/hotelSlice";
+import { useDispatch } from "react-redux";
 
-function EditHotel(){
+function EditHotel({hotelId, onClose}){
     const navigate=useNavigate()
     const [atmremove,setAtmRemove]=useState(false)
     const [loading,setLoading] =useState(false)
     const [loadingR,setLoadingR] =useState(false)
-    const {hotelId}=useParams()
+    const dispatch=useDispatch()
+    // const {hotelId}=useParams()
     const [selectHotel,setSelectHotel]=useState(null)
 
     const [hname,setHname]=useState("")
@@ -35,7 +38,7 @@ function EditHotel(){
     },[selectHotel])
     useEffect(()=>{
         getHotelById()
-    },[])
+    },[hotelId])
 
     const handleEditHotel = async () => {
         setLoading(true)
@@ -46,7 +49,7 @@ function EditHotel(){
             const result= await axios.post(serverUrl+`/api/hotel/edithotel/${hotelId}`,{ hname, place },{withCredentials:true})
             console.log(result.data)
             setLoading(false)
-            navigate("/hotels")
+            onClose();
             toast.success("Info Updated")
         } catch (error) {
             console.log(error)
@@ -60,10 +63,11 @@ function EditHotel(){
         setLoadingR(true)
         try {
             const result = await axios.delete(serverUrl+`/api/hotel/remove/${hotelId}`,{withCredentials:true})
+            dispatch(removeHotelFromList(hotelId));
             console.log(result.data)
             setLoadingR(false)
             toast.success("Hotel Removed")
-            navigate("/hotels")
+            onClose();
         } catch (error) {
             console.log(error)
             setLoadingR(false)
@@ -73,12 +77,12 @@ function EditHotel(){
     return(
         <div className='max-w-5xl mx-auto p-6 mt-10 bg-white rounded-lg shadow-md'>
             <div className='flex items-center justify-center gap-[20px] md:justify-between flex-col md:flex-row mb-6 relative'>
-                <FaArrowLeftLong className='absolute top-[-20%] left-[0] md:top-[20%] md:left-[2%] w-[22px] h-[22px] cursor-pointer' onClick={()=>navigate("/hotels")}/>
+                {/* <FaArrowLeftLong className='absolute top-[-20%] left-[0] md:top-[20%] md:left-[2%] w-[22px] h-[22px] cursor-pointer' onClick={()=>navigate(-1)}/> */}
 
                 <h2 className='text-2xl font-semibold md:pl-[60px]'>Edit Basic Hotel Information</h2>
-                <div className='space-x-2 space-y-2'>
+                {/* <div className='space-x-2 space-y-2'>
                     <button className='bg-black text-white px-4 py-2 rounded-md' onClick={()=>navigate(`/receppage/${hotelId}`)}>Go to Recep page</button>
-                </div>    
+                </div>     */}
             </div>
             <div className='bg-gray-50 p-6 rounded-md'>
                 <form className='space-y-6' onSubmit={(e)=>e.preventDefault()}>
@@ -93,7 +97,9 @@ function EditHotel(){
                     </div>
 
                     <div className='flex items-center justify-start gap-[15px]'>
-                        <button className='bg-[#e9e8e8] hover:bg-red-200 text-black border-1 border-black cursor-pointer px-4 py-2 rounded-md' onClick={()=>navigate("/hotels")}>Cancel</button>
+                        <button type="button" className='bg-[#e9e8e8] hover:bg-red-200 text-black px-4 py-2 rounded-md'onClick={onClose}>Cancel</button>
+
+
                        <button className='bg-black text-white px-7 py-2 rounded-md hover:bg-gray-500 cursor-pointer' onClick={handleEditHotel}>{loading? <ClipLoader size={30} color="grey"/>:"Save Changes"}</button>
                     </div>
                 </form>
@@ -103,7 +109,8 @@ function EditHotel(){
                 {atmremove && <div className='space-x-2 pt-6'>
                     <div>Think again before confirmation</div>
                     <div className='flex items-center justify-start gap-[15px]'>
-                        <button className='bg-[#e9e8e8] hover:bg-red-200 text-black border-1 border-black cursor-pointer px-4 py-2 rounded-md' onClick={()=>navigate("/hotels")}>Cancel</button>
+                        <button type="button"className='bg-[#e9e8e8] hover:bg-red-200 text-black px-4 py-2 rounded-md'onClick={onClose}> Cancel</button>
+
                        <button className='bg-red-600 text-white px-4 py-2 rounded-md ' onClick={handleRemoveHotel} >Remove</button>
                     </div>
                 </div>}

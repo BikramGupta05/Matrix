@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./userSlice"
 import hotelSlice from "./hotelSlice"
 import expenseSlice from "./expenseSlice"
+import roomSlice from "./roomSlice"
 
 export const store = configureStore({
     reducer:{
         user:userSlice,
         hotel:hotelSlice,
-        expense:expenseSlice
+        expense:expenseSlice,
+        room:roomSlice
     }
 })
 

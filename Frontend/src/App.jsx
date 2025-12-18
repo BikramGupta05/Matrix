@@ -20,6 +20,8 @@ import CreateRecep from "./pages/Owner/CreateRecep.jsx";
 import CreateExpense from "./pages/Recep/CreateExpense.jsx";
 import AllExpense from "./pages/Owner/AllExpense.jsx";
 import HotelExpense from "./pages/Owner/HotelExpense.jsx";
+import AllRooms from "./pages/Owner/AllRooms.jsx";
+import Rooms from "./pages/Recep/Rooms.jsx";
 export const serverUrl="http://localhost:8000"
 function App(){
   getCurrentUser()
@@ -48,7 +50,7 @@ function App(){
         <Route path="/expenses/:recepId" element={userData?.role==="Owner" ? <Expenses/> : <Navigate to={"/login"}/>}/>
         <Route path="/allexpenses" element={userData?.role==="Owner" ? <AllExpense/> : <Navigate to={"/login"}/>}/>
         <Route path="/hotel-expense/:hotelId"element={userData?.role==="Owner" ? <HotelExpense/> : <Navigate to="/login" />}/>
-
+        <Route path="/allrooms" element={userData ? <Rooms/> : <Navigate to={"/login"}/>}/>
       </Routes>
 
     </div>
