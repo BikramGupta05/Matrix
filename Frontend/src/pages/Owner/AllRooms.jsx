@@ -20,7 +20,7 @@ function AllRooms({ hotelId }) {
     try {
       setLoading(true);
       const result = await axios.get(
-        serverUrl + `/api/room/getroomsbyhotelid/${hotelId}`,
+        serverUrl + `/api/room/hotel/${hotelId}`,
         { withCredentials: true }
       );
       setRooms(result.data);
@@ -41,7 +41,7 @@ function AllRooms({ hotelId }) {
     try {
       setAdding(true);
       await axios.post(
-        serverUrl + "/api/room/createroom",
+        serverUrl + "/api/room/create",
         { roomnumber, status, roomHotelId: hotelId },
         { withCredentials: true }
       );

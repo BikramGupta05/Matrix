@@ -3,13 +3,15 @@ import userSlice from "./userSlice"
 import hotelSlice from "./hotelSlice"
 import expenseSlice from "./expenseSlice"
 import roomSlice from "./roomSlice"
+import bookingSlice from "./bookingSlice"
 
 export const store = configureStore({
     reducer:{
         user:userSlice,
         hotel:hotelSlice,
         expense:expenseSlice,
-        room:roomSlice
+        room:roomSlice,
+        booking:bookingSlice
     }
 })
 

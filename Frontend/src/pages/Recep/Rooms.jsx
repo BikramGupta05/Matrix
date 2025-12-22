@@ -1,20 +1,101 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { serverUrl } from "../../App";
+import BookingModal from "./BookingModal.jsx";
 
+/* =========================
+   ROOM CARD
+========================= */
+const RoomCard = ({ room, changeStatus, setSelectedRoom }) => (
+  <div className="bg-white rounded-xl shadow p-4 flex flex-col gap-2 text-center">
+    <div className="font-semibold">Room {room.roomnumber}</div>
+
+    {room.status === "available" && (
+      <div className="flex justify-center gap-2">
+        <button
+          onClick={() => changeStatus(room._id, "onhold")}
+          className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full"
+        >
+          Hold
+        </button>
+        <button
+          onClick={() => setSelectedRoom(room)}
+          className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
+        >
+          Book
+        </button>
+      </div>
+    )}
+
+    {room.status === "onhold" && (
+      <div className="flex justify-center gap-2">
+        <button
+          onClick={() => changeStatus(room._id, "available")}
+          className="bg-green-100 text-green-700 px-3 py-1 rounded-full"
+        >
+          Available
+        </button>
+        <button
+          onClick={() => setSelectedRoom(room)}
+          className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
+        >
+          Book
+        </button>
+      </div>
+    )}
+
+    {room.status === "booked" && (
+      <span className="text-red-600 font-semibold">Booked</span>
+    )}
+  </div>
+);
+
+/* =========================
+   SECTION
+========================= */
+const Section = ({ title, rooms, changeStatus, setSelectedRoom }) => (
+  <div className="border rounded-xl p-4">
+    <h3 className="font-semibold mb-4 flex justify-between">
+      <span>{title}</span>
+      <span>{rooms.length}</span>
+    </h3>
+
+    <div className="flex flex-col gap-3">
+      {rooms.length === 0 ? (
+        <p className="text-gray-400 text-center">No rooms</p>
+      ) : (
+        rooms.map(room => (
+          <RoomCard
+            key={room._id}
+            room={room}
+            changeStatus={changeStatus}
+            setSelectedRoom={setSelectedRoom}
+          />
+        ))
+      )}
+    </div>
+  </div>
+);
+
+/* =========================
+   MAIN COMPONENT
+========================= */
 function Rooms() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
-  // 🔹 Fetch rooms for receptionist
   const fetchRooms = async () => {
     try {
       setLoading(true);
-      const result = await axios.get(
-        serverUrl + "/api/room/getroomsbyrecepid",
+      const res = await axios.get(
+        `${serverUrl}/api/room/by-date?date=${selectedDate}`,
         { withCredentials: true }
       );
-      setRooms(result.data);
+      setRooms(res.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -24,23 +105,19 @@ function Rooms() {
 
   useEffect(() => {
     fetchRooms();
-  }, []);
+  }, [selectedDate]);
 
-  // 🔹 Change room status (available ↔ onhold)
-  const changeStatus = async (roomId, newStatus) => {
+  const changeStatus = async (roomId, status) => {
     try {
       await axios.patch(
-        serverUrl + `/api/room/updatestatus/${roomId}`,
-        { status: newStatus },
+        `${serverUrl}/api/room/status/${roomId}`,
+        { status },
         { withCredentials: true }
       );
 
-      // ✅ Instant UI update
       setRooms(prev =>
-        prev.map(room =>
-          room._id === roomId
-            ? { ...room, status: newStatus }
-            : room
+        prev.map(r =>
+          r._id === roomId ? { ...r, status } : r
         )
       );
     } catch (error) {
@@ -48,143 +125,61 @@ function Rooms() {
     }
   };
 
-  // 🔹 Group + sort rooms
-  const availableRooms = rooms
-    .filter(r => r.status === "available")
-    .sort((a, b) => Number(a.roomnumber) - Number(b.roomnumber));
+  const onBookingSuccess = roomId => {
+    setRooms(prev =>
+      prev.map(r =>
+        r._id === roomId ? { ...r, status: "booked" } : r
+      )
+    );
+  };
 
-  const onHoldRooms = rooms
-    .filter(r => r.status === "onhold")
-    .sort((a, b) => Number(a.roomnumber) - Number(b.roomnumber));
-
-  const bookedRooms = rooms
-    .filter(r => r.status === "booked")
-    .sort((a, b) => Number(a.roomnumber) - Number(b.roomnumber));
-
-  // 🔹 Room Card Component
-  const RoomCard = ({ room }) => (
-    <div className="grid grid-cols-2 gap-6 bg-white rounded-xl shadow px-4 py-3 flex flex-col gap-2 text-center font-medium">
-      <div>Room No: {room.roomnumber}</div>
-
-      <div className="flex justify-center gap-2">
-
-        {/* AVAILABLE → HOLD + BOOK */}
-        {room.status === "available" && (
-          <>
-            <button
-              onClick={() => changeStatus(room._id, "onhold")}
-              className="text-sm bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full"
-            >
-              Hold
-            </button>
-
-            <button
-              disabled
-              className="text-sm bg-gray-200 text-gray-500 px-3 py-1 rounded-full cursor-not-allowed"
-            >
-              Book
-            </button>
-          </>
-        )}
-
-        {/* ON HOLD → AVAILABLE + BOOK */}
-        {room.status === "onhold" && (
-          <>
-            <button
-              onClick={() => changeStatus(room._id, "available")}
-              className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full"
-            >
-              Available
-            </button>
-
-            <button
-              disabled
-              className="text-sm bg-gray-200 text-gray-500 px-3 py-1 rounded-full cursor-not-allowed"
-            >
-              Book
-            </button>
-          </>
-        )}
-
-        {/* BOOKED → NO ACTION */}
-        {room.status === "booked" && (
-          <span className="text-sm text-red-500 font-semibold">
-            Booked
-          </span>
-        )}
-
-      </div>
-    </div>
-  );
+  const availableRooms = rooms.filter(r => r.status === "available");
+  const onHoldRooms = rooms.filter(r => r.status === "onhold");
+  const bookedRooms = rooms.filter(r => r.status === "booked");
 
   return (
     <div className="p-6">
+      <div className="mb-4 flex gap-3 items-center">
+        <span>Date:</span>
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={e => setSelectedDate(e.target.value)}
+          className="border px-3 py-1 rounded"
+        />
+      </div>
+
       {loading ? (
         <p className="text-center">Loading...</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-          {/* AVAILABLE */}
-          <div className="border rounded-xl p-4">
-            <h3 className="flex justify-between mb-4 font-semibold">
-              <span>Available</span>
-              <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                {availableRooms.length}
-              </span>
-            </h3>
-
-            <div className="flex flex-col gap-3">
-              {availableRooms.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center">No rooms</p>
-              ) : (
-                availableRooms.map(room => (
-                  <RoomCard key={room._id} room={room} />
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* ON HOLD */}
-          <div className="border rounded-xl p-4">
-            <h3 className="flex justify-between mb-4 font-semibold">
-              <span>On Hold</span>
-              <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
-                {onHoldRooms.length}
-              </span>
-            </h3>
-
-            <div className="flex flex-col gap-3">
-              {onHoldRooms.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center">No rooms</p>
-              ) : (
-                onHoldRooms.map(room => (
-                  <RoomCard key={room._id} room={room} />
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* BOOKED */}
-          <div className="border rounded-xl p-4">
-            <h3 className="flex justify-between mb-4 font-semibold">
-              <span>Booked</span>
-              <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full">
-                {bookedRooms.length}
-              </span>
-            </h3>
-
-            <div className="flex flex-col gap-3">
-              {bookedRooms.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center">No rooms</p>
-              ) : (
-                bookedRooms.map(room => (
-                  <RoomCard key={room._id} room={room} />
-                ))
-              )}
-            </div>
-          </div>
-
+          <Section
+            title="Available"
+            rooms={availableRooms}
+            changeStatus={changeStatus}
+            setSelectedRoom={setSelectedRoom}
+          />
+          <Section
+            title="On Hold"
+            rooms={onHoldRooms}
+            changeStatus={changeStatus}
+            setSelectedRoom={setSelectedRoom}
+          />
+          <Section
+            title="Booked"
+            rooms={bookedRooms}
+            changeStatus={changeStatus}
+            setSelectedRoom={setSelectedRoom}
+          />
         </div>
+      )}
+
+      {selectedRoom && (
+        <BookingModal
+          room={selectedRoom}
+          onClose={() => setSelectedRoom(null)}
+          onSuccess={onBookingSuccess}
+        />
       )}
     </div>
   );
