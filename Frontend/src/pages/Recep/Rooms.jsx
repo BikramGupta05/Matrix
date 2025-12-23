@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { serverUrl } from "../../App";
 import BookingModal from "./BookingModal.jsx";
+import { useNavigate } from "react-router-dom";
 
 /* =========================
    ROOM CARD
@@ -87,6 +88,7 @@ function Rooms() {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const navigate=useNavigate()
 
   const fetchRooms = async () => {
     try {
@@ -139,7 +141,8 @@ function Rooms() {
 
   return (
     <div className="p-6">
-      <div className="mb-4 flex gap-3 items-center">
+      <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 px-4'>
+        <div className="mb-4 flex gap-3 items-center">
         <span>Date:</span>
         <input
           type="date"
@@ -147,7 +150,10 @@ function Rooms() {
           onChange={e => setSelectedDate(e.target.value)}
           className="border px-3 py-1 rounded"
         />
+        </div>
       </div>
+      
+
 
       {loading ? (
         <p className="text-center">Loading...</p>

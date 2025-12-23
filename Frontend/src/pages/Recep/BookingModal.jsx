@@ -6,35 +6,25 @@ function BookingModal({ room, onClose, onSuccess }) {
   const [form, setForm] = useState({
     guestName: "",
     guestPhone: "",
-    checkInDate: "",
-    checkOutDate: "",
+    checkInDateTime: "",
+    checkOutDateTime: "",
   });
 
+  // 🔴 CHANGED: current date-time restriction
+  const now = new Date().toISOString().slice(0, 16);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    const { guestName, guestPhone, checkInDate, checkOutDate } = form;
-
-    if (!guestName || !guestPhone || !checkInDate || !checkOutDate) {
-      alert("Fill all details");
-      return;
-    }
-
-    if (new Date(checkOutDate) <= new Date(checkInDate)) {
-      alert("Check-out date must be after check-in date");
-      return;
-    }
-
     try {
       setLoading(true);
       await axios.post(
         `${serverUrl}/api/booking/create`,
         {
           roomId: room._id,
-          guestName,
-          guestPhone,
-          checkInDate,
-          checkOutDate,
+          guestName: form.guestName,
+          guestPhone: form.guestPhone,
+          checkInDateTime: form.checkInDateTime,
+          checkOutDateTime: form.checkOutDateTime,
         },
         { withCredentials: true }
       );
@@ -42,17 +32,16 @@ function BookingModal({ room, onClose, onSuccess }) {
       onSuccess(room._id);
       onClose();
     } catch (error) {
-      console.log(error);
-      alert("Booking failed");
+      alert(error.response?.data?.message || "Booking failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-      <div className="bg-white rounded-xl p-6 w-[400px]">
-        <h2 className="text-lg font-semibold mb-4">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-xl w-[400px]">
+        <h2 className="font-semibold mb-4">
           Book Room {room.roomnumber}
         </h2>
 
@@ -72,32 +61,30 @@ function BookingModal({ room, onClose, onSuccess }) {
           }
         />
 
+        {/* 🔴 CHANGED */}
         <input
-          type="date"
+          type="datetime-local"
+          min={now}
           className="w-full border p-2 mb-2"
           onChange={e =>
-            setForm({ ...form, checkInDate: e.target.value })
+            setForm({ ...form, checkInDateTime: e.target.value })
           }
         />
 
+        {/* 🔴 CHANGED */}
         <input
-          type="date"
+          type="datetime-local"
+          min={form.checkInDateTime || now}
           className="w-full border p-2 mb-4"
           onChange={e =>
-            setForm({ ...form, checkOutDate: e.target.value })
+            setForm({ ...form, checkOutDateTime: e.target.value })
           }
         />
 
         <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="border px-4 py-2 rounded">
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
-          >
-            {loading ? "Booking..." : "Confirm Booking"}
+          <button onClick={onClose}>Cancel</button>
+          <button onClick={handleSubmit} disabled={loading}>
+            {loading ? "Booking..." : "Confirm"}
           </button>
         </div>
       </div>

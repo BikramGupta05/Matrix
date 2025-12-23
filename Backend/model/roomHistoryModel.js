@@ -22,12 +22,13 @@ const roomHistorySchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["available", "onhold", "booked"],
-      required: true,
+      enum: ["booked"],
+      default: "booked",
     },
     bookingId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Booking",
+      required: true,
     },
   },
   { timestamps: true }

@@ -102,6 +102,7 @@ function Nav() {
             <>
             <div onClick={() => navigate("/expenses")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">Expenses</div>
             <div onClick={() => navigate("/allrooms")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">All Rooms</div>
+            <div onClick={() => navigate("/allbookings")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">All Bookings</div>
             </>
           )}
         </div>

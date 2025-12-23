@@ -29,12 +29,14 @@ const bookingSchema = new mongoose.Schema(
       required: true,
     },
 
-    checkInDate: {
+    // 🔴 CHANGED (date + time instead of date only)
+    checkInDateTime: {
       type: Date,
       required: true,
     },
 
-    checkOutDate: {
+    // 🔴 CHANGED (date + time instead of date only)
+    checkOutDateTime: {
       type: Date,
       required: true,
     },
