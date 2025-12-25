@@ -23,11 +23,38 @@ import HotelExpense from "./pages/Owner/HotelExpense.jsx";
 import AllRooms from "./pages/Owner/AllRooms.jsx";
 import Rooms from "./pages/Recep/Rooms.jsx";
 import AllBookings from "./pages/Recep/AllBookings.jsx";
+import { useUserStore } from "./store/user-store.js";
+import { useEffect } from "react";
+import { useState } from "react";
+import { HotelBill } from "./pages/Recep/HotelBill.jsx";
 export const serverUrl="http://localhost:8000"
 function App(){
   getCurrentUser()
   getAdminHotel()
   const {userData}=useSelector(state=>state.user)
+  const {user, logout, isLoggedIn, expiry} = useUserStore()
+
+  // return true when token not expired and user is loggedin
+  // return false in case of not authenticated use
+  const checkAuthFromStore = () => {
+    if(!isLoggedIn || expiry < Date.now()){
+      logout()
+      return false
+    }
+    return true
+  }
+
+  useEffect(()=> {
+    if(checkAuthFromStore()){
+      setIsAuth(true)
+      // console.log("loggen in user")
+    }else {
+      setIsAuth(false)
+    }
+  },[])
+
+  const [isAuth, setIsAuth] = useState(false)
+  
   return (
     <>
     <ToastContainer />
@@ -36,23 +63,25 @@ function App(){
       <Routes >
         <Route path="/" element={<Home/>}/>
         <Route path="/login" element={<Login/>}/>
-        <Route path="/signup" element={!userData ? <SignUp/> : <Navigate to={"/"}/>}/>
-        <Route path="/profile" element={userData ? <Profile/> : <Navigate to={"/login"}/>}/>
+        <Route path="/signup" element={isAuth ? <SignUp/> : <Navigate to={"/"}/>}/>
+        <Route path="/profile" element={isAuth ? <Profile/> : <Navigate to={"/login"}/>}/>
         <Route path="/forget" element={<ForgetPassword/> }/>
-        <Route path="/editprofile" element={userData ? <EditProfile/> : <Navigate to={"/login"}/>}/>
-        <Route path="/hotels" element={userData?.role==="Owner" ? <Hotels/> : <Navigate to={"/login"}/>}/>
-        <Route path="/expenses" element={userData ? <Expenses/> : <Navigate to={"/login"}/>}/>
-        <Route path="/addnewhotel" element={userData?.role==="Owner" ? <CreateHotel/> : <Navigate to={"/login"}/>}/>
-        <Route path="/edithotel/:hotelId" element={userData?.role==="Owner" ? <EditHotel/> : <Navigate to={"/login"}/>}/>
-        <Route path="/receppage/:hotelId" element={userData?.role==="Owner" ? <RecepPage/> : <Navigate to={"/login"}/>}/>
+        <Route path="/editprofile" element={isAuth ? <EditProfile/> : <Navigate to={"/login"}/>}/>
+        <Route path="/hotels" element={(isAuth && user?.role==="Owner") ? <Hotels/> : <Navigate to={"/login"}/>}/>
+        <Route path="/expenses" element={isAuth ? <Expenses/> : <Navigate to={"/login"}/>}/>
+        <Route path="/addnewhotel" element={(isAuth && user?.role==="Owner") ? <CreateHotel/> : <Navigate to={"/login"}/>}/>
+        <Route path="/edithotel/:hotelId" element={(isAuth && user?.role==="Owner") ? <EditHotel/> : <Navigate to={"/login"}/>}/>
+        <Route path="/receppage/:hotelId" element={(isAuth && user?.role==="Owner") ? <RecepPage/> : <Navigate to={"/login"}/>}/>
         {/* <Route path="/createrecep/:hotelId" element={userData?.role==="Owner" ? <CreateRecep/> : <Navigate to={"/login"}/>}/> */}
-        <Route path="/createrecep/:hotelId" element={userData?.role==="Owner" ? <CreateRecep/> : <Navigate to={"/login"}/>}/>
-        <Route path="/addnewexpense" element={userData?.role==="Recep" ? <CreateExpense/> : <Navigate to={"/login"}/>}/>
-        <Route path="/expenses/:recepId" element={userData?.role==="Owner" ? <Expenses/> : <Navigate to={"/login"}/>}/>
-        <Route path="/allexpenses" element={userData?.role==="Owner" ? <AllExpense/> : <Navigate to={"/login"}/>}/>
-        <Route path="/hotel-expense/:hotelId"element={userData?.role==="Owner" ? <HotelExpense/> : <Navigate to="/login" />}/>
-        <Route path="/allrooms" element={userData ? <Rooms/> : <Navigate to={"/login"}/>}/>
-        <Route path="/allbookings" element={userData ? <AllBookings/> : <Navigate to={"/login"}/>}/>
+        <Route path="/createrecep/:hotelId" element={(isAuth && user?.role==="Owner") ? <CreateRecep/> : <Navigate to={"/login"}/>}/>
+        <Route path="/addnewexpense" element={(isAuth && user?.role==="Recep") ? <CreateExpense/> : <Navigate to={"/login"}/>}/>
+        <Route path="/expenses/:recepId" element={(isAuth && user?.role==="Owner") ? <Expenses/> : <Navigate to={"/login"}/>}/>
+        <Route path="/allexpenses" element={(isAuth && user?.role==="Owner")? <AllExpense/> : <Navigate to={"/login"}/>}/>
+        <Route path="/hotel-expense/:hotelId"element={(isAuth && user?.role==="Owner")? <HotelExpense/> : <Navigate to="/login" />}/>
+        <Route path="/allrooms" element={isAuth ? <Rooms/> : <Navigate to={"/login"}/>}/>
+        <Route path="/allbookings" element={isAuth ? <AllBookings/> : <Navigate to={"/login"}/>}/>
+        <Route path="/hotelbill" element={isAuth ? <HotelBill/> : <Navigate to={"/login"}/>}/>
+        
       </Routes>
 
     </div>

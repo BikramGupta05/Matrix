@@ -7,8 +7,9 @@ export const useUserStore = create()(
       user: null,
       isLoggedIn: false,
       token: null,
+      expiry: null,
     //   addABear: () => set({ bears: get().bears + 1 }),
-        login: (data) => set({isLoggedIn: true, user: data.user, token: data.token}),
+        login: (data) => set({isLoggedIn: true, user: data.user, token: data.token, expiry: Date.now()+7*24*3600}),
         logout: () => set({isLoggedIn: false, user:null, token: null}),
     }),
     {

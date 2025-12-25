@@ -17,7 +17,7 @@ function Nav() {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const [showHam, setShowHam] = useState(false);
-  const { logout } = useUserStore();
+  const { user,logout } = useUserStore();
 
   // refs to detect outside clicks
   const dropdownRef = useRef(null);      // dropdown menu element
@@ -77,7 +77,7 @@ function Nav() {
     }
   };
 
-  const avatarInitial = (userData?.name || "").slice(0, 1).toUpperCase();
+  const avatarInitial = (user?.name || "").slice(0, 1).toUpperCase();
 
   return (
     <div>
@@ -89,7 +89,7 @@ function Nav() {
         {/* center buttons (desktop) */}
         <div className="w-[30%] lg:flex items-center justify-center gap-4 hidden">
           {/* for Owner */}
-          {userData?.role === "Owner" && (
+          {user?.role === "Owner" && (
              <>
              <div onClick={() => navigate("/hotels")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">Hotels</div>
              <div onClick={() => navigate("/allexpenses")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">All Expenses</div>
@@ -98,7 +98,7 @@ function Nav() {
           )}
 
           {/* for Recep */}
-          {userData?.role === "Recep" && (
+          {user?.role === "Recep" && (
             <>
             <div onClick={() => navigate("/expenses")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">Expenses</div>
             <div onClick={() => navigate("/allrooms")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">All Rooms</div>
@@ -110,19 +110,19 @@ function Nav() {
         {/* avatar + login/logout (desktop) */}
         <div className="w-[30%] lg:flex items-center justify-center gap-4 hidden">
           {/* Avatar or login icon - avatarBtnRef is used to detect clicks on the button */}
-          {!userData ? (
+          {!user ? (
             <button ref={avatarBtnRef} onClick={() => setShow((p) => !p)} className="w-[50px] h-[50px] rounded-full flex items-center justify-center border-2 bg-white border-white cursor-pointer" aria-label="open-login">
               <IoPersonCircle className="w-[34px] h-[34px] fill-black" />
             </button>
-          ) : userData.photoUrl ? (
-            <img ref={avatarBtnRef} src={userData.photoUrl} alt="avatar" onClick={() => setShow((p) => !p)} className="w-[50px] h-[50px] rounded-full object-cover border-2 bg-black border-white cursor-pointer" />
+          ) : user.photoUrl ? (
+            <img ref={avatarBtnRef} src={user.photoUrl} alt="avatar" onClick={() => setShow((p) => !p)} className="w-[50px] h-[50px] rounded-full object-cover border-2 bg-black border-white cursor-pointer" />
           ) : (
             <div ref={avatarBtnRef} onClick={() => setShow((p) => !p)} className="w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer">
               {avatarInitial}
             </div>
           )}
 
-          {!userData ? (
+          {!user ? (
             <span onClick={() => navigate("/login")} className="px-[20px] py-[10px] border-2 border-white text-white rounded-[10px] text-[18px] font-light bg-[#000000d5] cursor-pointer">Login</span>
           ) : (
             <span onClick={handleLogOut} className="px-[20px] py-[10px] bg-white text-black rounded-[10px] shadow-sm shadow-black text-[18px] cursor-pointer">LogOut</span>
@@ -143,12 +143,12 @@ function Nav() {
         <div className={`fixed top-0 left-0 w-[100vw] h-[100vh] bg-[#000000d6] flex items-center justify-center flex-col gap-5 z-10 lg:hidden ${showHam ? "translate-x-[0] transition duration-600" : "translate-x-[-100%] transition duration-600"}`}>
           <GiSplitCross className="w-[35px] h-[35px] fill-white absolute top-5 right-[4%]" onClick={() => setShowHam((p) => !p)} />
 
-          {!userData ? <IoPersonCircle className="w-[50px] h-[50px] fill-black cursor-pointer" /> : userData.photoUrl ? <img src={userData.photoUrl} className="w-[50px] h-[50px] rounded-full object-cover border-2 bg-black border-white cursor-pointer" /> : <div className="w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer">{avatarInitial}</div>}
+          {!user ? <IoPersonCircle className="w-[50px] h-[50px] fill-black cursor-pointer" /> : user.photoUrl ? <img src={user.photoUrl} className="w-[50px] h-[50px] rounded-full object-cover border-2 bg-black border-white cursor-pointer" /> : <div className="w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer">{avatarInitial}</div>}
 
           <div onClick={()=>navigate("/profile")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer"> My Profile</div>
           <div className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer"> My Courses</div>
-          {userData?.role === "Owner" && <div className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer" onClick={()=>navigate("/dashboard")}> Owner</div>}
-          {!userData ? <span onClick={()=>navigate("/login")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">Login</span> : <span onClick={handleLogOut} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">LogOut</span>}
+          {user?.role === "Owner" && <div className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer" onClick={()=>navigate("/dashboard")}> Owner</div>}
+          {!user ? <span onClick={()=>navigate("/login")} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">Login</span> : <span onClick={handleLogOut} className="w-[200px] h-[65px] flex items-center justify-center border-2 border-white text-white bg-black rounded-[10px] text-[18px] font-light cursor-pointer">LogOut</span>}
         </div>
       </div>
     </div>

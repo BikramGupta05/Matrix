@@ -24,15 +24,22 @@ function Login(){
     const [loading,setLoading]=useState(false)
     const dispatch = useDispatch()
 
-    const {login, user, isLoggedIn} = useUserStore()
+    const {logout, login, user, isLoggedIn} = useUserStore()
 
 
     const handleLogin=async () => {
         setLoading(true)
         try {
             const result=await axios.post(serverUrl+"/api/auth/login",{email,password},{withCredentials:true})
-            const userData = result.data
-            login({user:userData, token:""});
+            const res = result.data
+            if(!res.user || !res.token){
+                setEmail("")
+                setPassword("")
+                logout()
+                toast.error("Not sufficient data available")
+                return 
+            }
+            login({user:res?.user, token:res?.token});
             dispatch(setUserData(result.data))
             setLoading(false)
             navigate("/")

@@ -7,6 +7,7 @@ import {
   setHistory,
   setLoading,
 } from "../../redux/bookingSlice";
+import { useNavigate } from "react-router-dom";
 
 /* =====================
    HELPERS
@@ -38,6 +39,7 @@ const isBookingOnDate = (booking, selectedDate) => {
 
 function AllBookings() {
   const dispatch = useDispatch();
+  const navigate=useNavigate()
   const { current = [], history = [], loading } = useSelector(
     state => state.booking
   );
@@ -161,6 +163,9 @@ function AllBookings() {
                           }`}
                         >
                           {isUpcoming ? "Upcoming" : "Active"}
+                        </div>
+                        <div onClick={()=>navigate("/hotelbill")}>
+                            Download Reciept
                         </div>
                       </div>
                     </div>

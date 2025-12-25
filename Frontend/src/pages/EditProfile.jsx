@@ -7,13 +7,15 @@ import { serverUrl } from '../App';
 import { setUserData } from '../redux/userSlice';
 import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
+import { useUserStore } from '../store/user-store';
 
 function EditProfile() {
     const navigate=useNavigate()
-    const {userData}=useSelector(state=>state.user)
+    // const {userData}=useSelector(state=>state.user)
+    const {user, login} = useUserStore()
 
-    const [name,setName]=useState(userData.name || "")
-    const [description,setDescription]=useState(userData.description||"")
+    const [name,setName]=useState(user.name || "")
+    const [description,setDescription]=useState(user.description||"")
     const [photoUrl,setPhotoUrl]=useState(null)
     const [loading,setLoading]=useState(false)
     const dispatch=useDispatch()
@@ -27,7 +29,9 @@ function EditProfile() {
         setLoading(true)
         try {
             const result= await axios.post(serverUrl+"/api/user/profile",formData,{withCredentials:true})
-            dispatch(setUserData(result.data))
+            // dispatch(setuser(result.data))
+            console.log(result.data)
+            login({user:result.data})
             setLoading(false)
             navigate("/")
             toast.success("Profile Updated")
@@ -46,9 +50,9 @@ function EditProfile() {
                 </h2>
                 <form action="" className='space-y-5' onSubmit={(e)=>e.preventDefault()}>
                     <div className='flex flex-col items-center text-center'>
-                        {userData.photoUrl? <img src={userData.photoUrl} className='w-24 h-24 rounded-full object-cover border-4 border-[black]' alt="" /> :
+                        {user.photoUrl? <img src={user.photoUrl} className='w-24 h-24 rounded-full object-cover border-4 border-[black]' alt="" /> :
                         <div className='w-24 h-24 rounded-full text-white flex items-center justify-center text-[30px] border-2 bg-black border-white'>
-                        {userData?.name.slice(0,1).toUpperCase()}
+                        {user?.name.slice(0,1).toUpperCase()}
                         </div>}
                     </div>
 
@@ -64,14 +68,14 @@ function EditProfile() {
                     <div>
                         <label htmlFor="name" className='text-sm font-medium text-gray-700'>Username</label>
                         <input id='name' type="text"
-                        placeholder={userData.name}
+                        placeholder={user.name}
                         className='w-full px-4 py-2 border rounded-md text-sm' onChange={(e)=>setName(e.target.value)} value={name}/>
                     </div>
 
                     <div>
                         <label className='text-sm font-medium text-gray-700'>Email</label>
                         <input readOnly type="text"
-                        placeholder={userData.email}
+                        placeholder={user.email}
                         className='w-full px-4 py-2 border rounded-md text-sm' />
                     </div>
 

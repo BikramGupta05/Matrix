@@ -2,34 +2,35 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { useUserStore } from '../store/user-store';
 
 function Profile() {
-    const {userData}=useSelector(state=>state.user)
+    const {user} = useUserStore()
     const navigate=useNavigate()
   return (
     <div className='min-h-screen bg-gray-100 px-4 py-10 flex items-center justify-center'>
         <div className='bg-white shadow-lg rounded-2xl p-8 max-w-xl w-full relative'>
             <FaArrowLeftLong className='absolute top-[8%] left-[5%] w-[22px] h-[22px] cursor-pointer' onClick={()=>navigate(-1)}/>
             <div className=' flex flex-col items-center text-center'>
-                {userData.photoUrl? <img src={userData.photoUrl} className='w-24 h-24 rounded-full object-cover border-4 border-[black]' alt="" /> :
+                {user?.photoUrl ? <img src={user?.photoUrl} className='w-24 h-24 rounded-full object-cover border-4 border-[black]' alt="" /> :
                 <div className='w-24 h-24 rounded-full text-white flex items-center justify-center text-[30px] border-2 bg-black border-white'>
-                    {userData?.name.slice(0,1).toUpperCase()}
+                    {user?.name.slice(0,1).toUpperCase()}
                 </div>}
-                <h2 className='text-2xl font-bold mt-4 text-gray-800'>{userData.name}</h2>
-                <p className='text-sm text-gray-500'>{userData.role}</p>
+                <h2 className='text-2xl font-bold mt-4 text-gray-800'>{user?.name}</h2>
+                <p className='text-sm text-gray-500'>{user?.role}</p>
             </div>
             <div className='mt-6 space-y-4'>
                 <div className='text-sm flex items-center justify-start gap-1'>
                     <span className='font-semibold text-gray-700'>Email:</span>
-                    <span>{userData.email}</span>
+                    <span>{user?.email}</span>
                 </div>
                 <div className='text-sm flex items-center justify-start gap-1'>
                     <span className='font-semibold text-gray-700'>Bio:</span>
-                    <span>{userData.description}</span>
+                    <span>{user?.description}</span>
                 </div>
                 <div className='text-sm flex items-center justify-start gap-1'>
                     <span className='font-semibold text-gray-700'>Total Hotels:</span>
-                    <span>{userData.enrolledrooms.length}</span>
+                    <span>{user?.enrolledrooms?.length}</span>
                 </div>
                 
             </div>
